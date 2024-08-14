@@ -53,32 +53,32 @@ def create_step_function():
 
 
 # Generate multiple charging profiles
-def generate_multiple_profiles(num_profiles=3):
+def generate_multiple_profiles():
+    profile_names = ["Grid Energy", "Solar Power", "Surplus Solar"]
     profiles = {}
-    for i in range(num_profiles):
+    for _, name in enumerate(profile_names):
         time_axis, power_schedule = create_step_function()
-        profile_name = f"Profile {i+1}"
-        profiles[profile_name] = pd.DataFrame(
+        profiles[name] = pd.DataFrame(
             {
                 "Time (Hours)": time_axis,
                 "Power Schedule (kWh)": power_schedule,
-                "Profile": profile_name,
+                "Profile": name,
             }
         )
     return profiles
 
 
 # Create a dictionary of profiles
-profiles = generate_multiple_profiles(num_profiles=3)
+profiles = generate_multiple_profiles()
 
 # Combine all profiles into a single DataFrame for easy plotting
 all_profiles_data = pd.concat(profiles.values(), ignore_index=True)
 
 # Define colors for each profile
 color_map = {
-    "Profile 1": "#1f77b4",  # Blue
-    "Profile 2": "#ff7f0e",  # Orange
-    "Profile 3": "#2ca02c",  # Green
+    "Grid Energy": "#1f77b4",  # Blue
+    "Solar Power": "#ff7f0e",  # Orange
+    "Surplus Solar": "#2ca02c",  # Green
     # Add more colors if more profiles are generated
 }
 
