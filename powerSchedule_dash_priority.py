@@ -14,6 +14,25 @@ STEP_MIN_DURATION = 1  # Minimum duration for a step (in hours)
 STEP_MAX_DURATION = 6  # Maximum duration for a step (in hours)
 
 
+# Define the debug decorator
+def debug_decorator(debug=False):
+    def decorator(func):
+        def wrapper(*args, **kwargs):
+            result = func(*args, **kwargs)
+            if debug:
+                if isinstance(result, pd.DataFrame):
+                    print("Debug Mode: DataFrame contents:")
+                    print(result)
+                else:
+                    print(f"Debug Mode: Function {func.__name__} returned:")
+                    print(result)
+            return result
+
+        return wrapper
+
+    return decorator
+
+
 # Generate random step durations that sum up to 24 hours
 def generate_random_durations():
     durations = []
@@ -29,6 +48,7 @@ def generate_random_durations():
 
 
 # Create the step function using the random durations and prioritized power levels
+@debug_decorator(debug=True)  # Enable debug mode
 def create_step_function_with_priority(profile_name):
     durations = generate_random_durations()
     time_points = [0]  # Start at 0 hours
@@ -72,7 +92,17 @@ def create_step_function_with_priority(profile_name):
     # Fill the remaining time points with the last power value if necessary
     while len(power_schedule) < TIME_PERIOD:
         power_schedule.append(power_schedule[-1])
-
+    #
+    # debug test :
+    # df = pd.DataFrame(
+    #     {
+    #         "Time (Hours)": time_period,
+    #         "Power Schedule (kWh)": power_schedule,
+    #         "Profile": profile_name,
+    #     }
+    # )
+    # return df
+    #
     return time_period, power_schedule
 
 
