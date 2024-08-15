@@ -6,6 +6,7 @@ import dash
 from dash import dcc, html
 from dash.dependencies import Input, Output
 from scipy.stats import norm
+from scipy.signal import savgol_filter
 
 # Constants
 TIME_PERIOD = 24  # 24 hours for a full day
@@ -104,10 +105,15 @@ def generate_mobility_needs_profile():
         mobility_needs, POWER_MIN, POWER_MAX
     )  # Ensure values are within range
 
+    # Apply Savitzky-Golay filter to smooth the mobility needs curve
+    smoothed_mobility_needs = savgol_filter(
+        mobility_needs, window_length=5, polyorder=3
+    )
+
     df = pd.DataFrame(
         {
             "Time (Hours)": time_period,
-            "Power Schedule (kWh)": mobility_needs,
+            "Power Schedule (kWh)": smoothed_mobility_needs,
             "Profile": "Mobility Needs",
         }
     )
